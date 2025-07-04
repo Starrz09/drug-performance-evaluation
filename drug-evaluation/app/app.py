@@ -1,6 +1,9 @@
 import streamlit as st
+import pandas as pd
 
+df_clean = pd.read_csv("data/df_clean.csv")
 df_streamlit = df_clean.copy()
+
 
 # -------------------------------
 # Streamlit Config
