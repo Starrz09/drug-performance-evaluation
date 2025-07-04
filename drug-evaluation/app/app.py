@@ -106,9 +106,10 @@ st.subheader("🔻✨ Low Performance but High Review Count")
 
 # Filter data
 low_perf = df_streamlit[
-    (df_streamlit['performance'] <= 2) &
-    (df_streamlit['reviews'] > 5000)
+    (df_streamlit['performance'] <= 3) &  
+    (df_streamlit['reviews'] > 5000)      
 ]
+
 
 # Prepare display table
 low_perf_display = low_perf[['drug', 'condition', 'performance', 'reviews']].drop_duplicates()
