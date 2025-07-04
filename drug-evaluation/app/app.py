@@ -102,12 +102,22 @@ if user_condition:
 # -------------------------------
 # Section 3: High Performance but Low Review Count
 # -------------------------------
-st.subheader(" 🔻✨ Low Performance but High Review Count")
+st.subheader("🔻✨ Low Performance but High Review Count")
 
-high_perf = df_streamlit[
-    (df_streamlit['performance'] <=2) &
-    (df_streamlit['reviews'] >= 5000)
+# Filter data
+low_perf = df_streamlit[
+    (df_streamlit['performance'] <= 2) &
+    (df_streamlit['reviews'] > 5000)
 ]
 
-high_perf_display = high_perf[['drug', 'condition', 'performance', 'reviews']].drop_duplicates()
-st.dataframe(high_perf_display.sort_values(by='performance', ascending=False).head(10))
+# Prepare for display
+low_perf_display = low_perf[['drug', 'condition', 'performance', 'reviews']].drop_duplicates()
+
+# Display sorted results
+st.dataframe(low_perf_display.sort_values(by='reviews', ascending=False))
+num_to_display = st.slider("How many results to show?", min_value=5, max_value=50, value=10, step=5)
+
+st.dataframe(
+    low_perf_display.sort_values(by='reviews', ascending=False).head(num_to_display)
+)
+
