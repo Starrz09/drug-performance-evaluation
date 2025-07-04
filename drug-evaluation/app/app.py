@@ -13,13 +13,17 @@ df_streamlit = df_clean.copy()
 # -------------------------------
 # Streamlit Config
 # -------------------------------
+# Streamlit config
 st.set_page_config(page_title="Drug Performance Explorer", layout="wide")
+
+# Disclaimer warning (high visibility)
 st.warning(
     "⚠️ **Disclaimer:** This app is for informational purposes only. "
     "It does not provide medical advice, diagnosis, or treatment. "
     "Always consult a licensed healthcare professional before making any medical decisions."
 )
 
+# App title and intro
 st.title("💊 Drug Performance Evaluation App")
 st.markdown("Analyze and explore drug performance across disease classes and conditions.")
 
@@ -30,6 +34,18 @@ st.sidebar.header("🔧 Filters")
 
 # Performance type toggle
 performance_type = st.sidebar.radio("Performance type", ["Average", "Weighted"])
+
+if performance_type == "Average":
+    st.sidebar.markdown(
+        "<span style='color:red;'>📊 Average = Equal weight of effectiveness, ease of use, and satisfaction.</span>",
+        unsafe_allow_html=True
+    )
+else:
+    st.sidebar.markdown(
+        "<span style='color:red;'>📈 Weighted = Same metrics, but prioritizes effectiveness more.</span>",
+        unsafe_allow_html=True
+    )
+
 perf_column = "performance" if performance_type == "Average" else "weighted_performance"
 
 # Disease class selector
