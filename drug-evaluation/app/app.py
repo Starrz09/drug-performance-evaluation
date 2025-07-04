@@ -1,7 +1,15 @@
 import streamlit as st
 import pandas as pd
 
-df_clean = pd.read_csv("data/df_clean.csv")
+import os
+
+# Get path to df_clean.csv regardless of where app.py is run from
+base_dir = os.path.dirname(__file__)  # gets /app
+csv_path = os.path.join(base_dir, "..", "data", "df_clean.csv")
+
+df_clean = pd.read_csv(csv_path)
+df_streamlit = df_clean.copy()
+
 df_streamlit = df_clean.copy()
 
 
