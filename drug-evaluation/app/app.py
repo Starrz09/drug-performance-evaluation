@@ -99,26 +99,6 @@ if user_condition:
     else:
         st.warning("No matching condition found with the selected drug types.")
 
-# -------------------------------
-# Section 3: High Performance but Low Review Count
-# -------------------------------
-st.subheader("🔻✨ Low Performance but High Review Count")
 
-# Filter data
-low_perf = df_streamlit[
-    (df_streamlit['performance'] <= 3) &  
-    (df_streamlit['reviews'] > 5000)      
-]
-
-
-# Prepare display table
-low_perf_display = low_perf[['drug', 'condition', 'performance', 'reviews']].drop_duplicates()
-low_perf_display = low_perf_display.sort_values(by='reviews', ascending=False)
-
-# Add slider to control number of rows shown
-num_to_display = st.slider("How many results to show?", min_value=5, max_value=min(50, len(low_perf_display)), value=10, step=5)
-
-# Show final dataframe
-st.dataframe(low_perf_display.head(num_to_display))
 
 
