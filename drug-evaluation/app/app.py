@@ -92,7 +92,7 @@ if user_condition:
             cond_filtered.groupby('drug', as_index=False)
             .agg(avg_performance=(perf_column, 'mean'), reviews=('reviews', 'sum'))
             .sort_values(by='avg_performance', ascending=False)
-            .head(5)
+            .head(10)
         )
         st.success(f"Top drug recommendations for **{user_condition}**:")
         st.dataframe(recommendations)
