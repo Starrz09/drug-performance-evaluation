@@ -14,6 +14,12 @@ df_streamlit = df_clean.copy()
 # Streamlit Config
 # -------------------------------
 st.set_page_config(page_title="Drug Performance Explorer", layout="wide")
+st.warning(
+    "⚠️ **Disclaimer:** This app is for informational purposes only. "
+    "It does not provide medical advice, diagnosis, or treatment. "
+    "Always consult a licensed healthcare professional before making any medical decisions."
+)
+
 st.title("💊 Drug Performance Evaluation App")
 st.markdown("Analyze and explore drug performance across disease classes and conditions.")
 
