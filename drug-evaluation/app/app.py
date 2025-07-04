@@ -52,4 +52,62 @@ filtered_df = df_streamlit[
 st.subheader(f"🏆 Top Drugs in '{disease_class}' (Sorted by {performance_type} Performance)")
 
 top_df = (
-    filtered_df.groupby(['d]()_
+    filtered_df.groupby(['drug', 'condition'], as_index=False)
+    .agg(avg_performance=(perf_column, 'mean'), reviews=('reviews', 'sum'))
+    .sort_values(by='avg_performance', ascending=False)
+    .head(10)
+)
+
+# Display table
+st.dataframe(top_df)
+
+# Display Streamlit-native bar chart
+if not top_df.empty:
+    top_df_display = top_df.copy()
+    top_df_display['drug_condition'] = top_df_display['drug'] + ' (' + top_df_display['condition'] + ')'
+    top_df_display = top_df_display.set_index('drug_condition')
+    st.bar_chart(top_df_display['avg_performance'])
+else:
+    st.warning("No data available for this combination.")
+
+# -------------------------------
+# Section 2: Recommend Drugs by Condition
+# -------------------------------
+st.subheader("🔍 Recommend Drugs by Condition")
+
+user_condition = st.text_input("Enter a condition (e.g., 'Diabetes', 'Back Pain')")
+
+# Drug type filter
+drug_types = df_streamlit['type'].dropna().unique()
+selected_types = st.multiselect("Filter by Drug Type", drug_types, default=list(drug_types))
+
+if user_condition:
+    cond_filtered = df_streamlit[
+        (df_streamlit['condition'].str.contains(user_condition, case=False, na=False)) &
+        (df_streamlit['type'].isin(selected_types))
+    ]
+
+    if not cond_filtered.empty:
+        recommendations = (
+            cond_filtered.groupby('drug', as_index=False)
+            .agg(avg_performance=(perf_column, 'mean'), reviews=('reviews', 'sum'))
+            .sort_values(by='avg_performance', ascending=False)
+            .head(5)
+        )
+        st.success(f"Top drug recommendations for **{user_condition}**:")
+        st.dataframe(recommendations)
+    else:
+        st.warning("No matching condition found with the selected drug types.")
+
+# -------------------------------
+# Section 3: High Performance but Low Review Count
+# -------------------------------
+st.subheader("🌟 High Performance but Low Review Count")
+
+high_perf = df_streamlit[
+    (df_streamlit['performance'] >= 4.5) &
+    (df_streamlit['reviews'] <= 5)
+]
+
+high_perf_display = high_perf[['drug', 'condition', 'performance', 'reviews']].drop_duplicates()
+st.dataframe(high_perf_display.sort_values(by='performance', ascending=False).head(10))
