@@ -78,7 +78,7 @@ st.subheader("🔍 Recommend Drugs by Condition")
 user_condition = st.text_input("Enter a condition (e.g., 'Diabetes', 'Back Pain')")
 
 # Drug type filter
-drug_types = df_streamlit['type'].dropna().unique()
+drug_types = df_streamlit['type'].unique()
 selected_types = st.multiselect("Filter by Drug Type", drug_types, default=list(drug_types))
 
 if user_condition:
@@ -102,11 +102,11 @@ if user_condition:
 # -------------------------------
 # Section 3: High Performance but Low Review Count
 # -------------------------------
-st.subheader("🌟 High Performance but Low Review Count")
+st.subheader(" 🔻✨ Low Performance but High Review Count")
 
 high_perf = df_streamlit[
-    (df_streamlit['performance'] >= 4.5) &
-    (df_streamlit['reviews'] <= 5)
+    (df_streamlit['performance'] <=2) &
+    (df_streamlit['reviews'] >= 5000)
 ]
 
 high_perf_display = high_perf[['drug', 'condition', 'performance', 'reviews']].drop_duplicates()
