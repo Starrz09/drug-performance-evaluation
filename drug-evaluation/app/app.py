@@ -1,9 +1,10 @@
 import streamlit as st
 import pandas as pd
-import matplotlib.pyplot as plt
 import os
 
-# Load data safely
+# -------------------------------
+# Load Data Safely
+# -------------------------------
 base_dir = os.path.dirname(__file__)
 csv_path = os.path.join(base_dir, "..", "data", "df_clean.csv")
 df_clean = pd.read_csv(csv_path)
@@ -26,12 +27,20 @@ performance_type = st.sidebar.radio("Performance type", ["Average", "Weighted"])
 perf_column = "performance" if performance_type == "Average" else "weighted_performance"
 
 # Disease class selector
-disease_class = st.sidebar.selectbox("Select disease class", sorted(df_streamlit['disease_class'].dropna().unique()))
+disease_class = st.sidebar.selectbox(
+    "Select disease class",
+    sorted(df_streamlit['disease_class'].dropna().unique())
+)
 
 # Minimum review count
-min_reviews = st.sidebar.slider("Minimum review count", 0, int(df_streamlit['reviews'].max()), 50)
+min_reviews = st.sidebar.slider(
+    "Minimum review count",
+    min_value=0,
+    max_value=int(df_streamlit['reviews'].max()),
+    value=50
+)
 
-# Filtered data for main analysis
+# Filtered data
 filtered_df = df_streamlit[
     (df_streamlit['disease_class'] == disease_class) &
     (df_streamlit['reviews'] >= min_reviews)
@@ -49,20 +58,17 @@ top_df = (
     .head(10)
 )
 
-# Table display
+# Display table
 st.dataframe(top_df)
 
-# Bar chart
-fig, ax = plt.subplots(figsize=(10, 6))
-ax.barh(
-    top_df['drug'] + ' (' + top_df['condition'] + ')',
-    top_df['avg_performance'],
-    color='mediumseagreen'
-)
-ax.invert_yaxis()
-ax.set_xlabel("Performance Score")
-ax.set_title(f"Top Performing Drugs ({performance_type})")
-st.pyplot(fig)
+# Display Streamlit-native bar chart
+if not top_df.empty:
+    top_df_display = top_df.copy()
+    top_df_display['drug_condition'] = top_df_display['drug'] + ' (' + top_df_display['condition'] + ')'
+    top_df_display = top_df_display.set_index('drug_condition')
+    st.bar_chart(top_df_display['avg_performance'])
+else:
+    st.warning("No data available for this combination.")
 
 # -------------------------------
 # Section 2: Recommend Drugs by Condition
@@ -98,6 +104,10 @@ if user_condition:
 # -------------------------------
 st.subheader("⚠️ Drugs with Low Performance but High Review Count")
 
-low_perf = df_streamlit[(df_streamlit['performance'] <= 2) & (df_streamlit['reviews'] > 5000)]
+low_perf = df_streamlit[
+    (df_streamlit['performance'] <= 2) &
+    (df_streamlit['reviews'] > 5000)
+]
+
 low_perf_display = low_perf[['drug', 'condition', 'performance', 'reviews']].drop_duplicates()
 st.dataframe(low_perf_display.sort_values(by='reviews', ascending=False).head(10))
