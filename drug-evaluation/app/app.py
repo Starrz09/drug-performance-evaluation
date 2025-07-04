@@ -110,14 +110,14 @@ low_perf = df_streamlit[
     (df_streamlit['reviews'] > 5000)
 ]
 
-# Prepare for display
+# Prepare display table
 low_perf_display = low_perf[['drug', 'condition', 'performance', 'reviews']].drop_duplicates()
+low_perf_display = low_perf_display.sort_values(by='reviews', ascending=False)
 
-# Display sorted results
-st.dataframe(low_perf_display.sort_values(by='reviews', ascending=False))
-num_to_display = st.slider("How many results to show?", min_value=5, max_value=50, value=10, step=5)
+# Add slider to control number of rows shown
+num_to_display = st.slider("How many results to show?", min_value=5, max_value=min(50, len(low_perf_display)), value=10, step=5)
 
-st.dataframe(
-    low_perf_display.sort_values(by='reviews', ascending=False).head(num_to_display)
-)
+# Show final dataframe
+st.dataframe(low_perf_display.head(num_to_display))
+
 
